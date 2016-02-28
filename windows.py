@@ -1,4 +1,4 @@
-seq = "TTTGGGTTTGGGTTTGGGTTTGGGGTTTGTGAAAGGGAAAGGGAAAGTGAGGGGAAAAAG"
+seq = "GGGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGTTAGTATGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGGGAAAGGGAAAAAAGGGGAAAAAAGTG"
 tab = []
 for i in range(len(seq)):
         try:
@@ -16,7 +16,7 @@ for i in range(len(seq)):
                                 temp.append(seq[i:i+4])
                                 print temp
                                 flag = 4
-                                while len("".join(temp))<100 and tetrs < 4:
+                                while len("".join(temp))<98 and tetrs < 4:
                                         print 'check'
                                         if seq[i+flag] == "G":
                                                 print "znalazlem G"
@@ -65,5 +65,6 @@ for i in range(len(seq)):
                 else:
                    print "PASSING/BREAKING"
                    break
+print "LENSEQ: %d"%(len(seq))
 print "FINAL:"
 for x,y in enumerate(tab): print y
