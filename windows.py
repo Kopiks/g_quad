@@ -1,4 +1,4 @@
-seq = "TTTGGGTTTGGGTTTGGGTTTGGGGTTTGTGAAAGGGAAAGGGAAAGTGAGGGGAA"
+seq = "TTTGGGTTTGGGTTTGGGTTTGGGGTTTGTGAAAGGGAAAGGGAAAGTGAGGGGAAAAAG"
 tab = []
 for i in range(len(seq)):
         try:
@@ -41,6 +41,10 @@ for i in range(len(seq)):
                                                              
                         
                                                         flag += 4
+                                                else:
+                                                        
+                                                        flag += 1                                                                        
+                                                        temp.append(seq[i+flag])
                                                                  
                                         else:   
                                                     
