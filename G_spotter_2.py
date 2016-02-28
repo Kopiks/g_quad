@@ -89,12 +89,13 @@ for line in tab_sorted:
 fo.close()
 
 scores=[0,0,0,0,0]
-tout=0
+
 for n,m in enumerate(scores):
-	for line in tab_sorted:
+	tout=0
+	for line in tab_sorted:		
 		if line[2]==n:
-			m += 1
-	tout += 1
+			scores[n] += 1
+		tout += 1
 for n in scores:
 	print n
 f = open("numbers.txt","w")

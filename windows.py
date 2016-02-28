@@ -29,16 +29,11 @@ for n in strand:
                                                                         while seq[i+flag+3+g_counter] == n[0]:
                                                                                 temp.append(seq[i+flag+3+g_counter])
                                                                                 g_counter += 1
-                                                                     
-                                
                                                                 flag += 4
-                                                        else:
-                                                                
+                                                        else:                                                                
                                                                 flag += 1                                                                        
                                                                 temp.append(seq[i+flag])
-                                                                         
-                                                else:   
-                                                            
+                                                else:                                                               
                                                         temp.append(seq[i+flag])
                                                         flag += 1
                                         if tetrs == 4:
