@@ -45,7 +45,7 @@ for n in strand:
                                                 score += 1
                                         temp.append(seq[i:i+4])
                                         flag = 4
-                                        while len("".join(temp))<98 and tetrs < 4:
+                                        while len("".join(temp))<48 and tetrs < 4:
                                                 if seq[i+flag] == n[0]:
                                                         if seq[i+flag+2] == n[0]:
                                                                 if "".join(seq[i+flag:i+flag+3]) != n[1]:

@@ -1,0 +1,1 @@
+bedtools sort -i "input" -s > "output"  : sort with strand

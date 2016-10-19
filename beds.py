@@ -1,6 +1,6 @@
 from pybedtools import BedTool
 
-gqs = BedTool('test.gff')
+gqs = BedTool('The_list.gff')
 genes = BedTool('TAIR10.gff')
 
 nearby = genes.window(gqs, stream=True)
