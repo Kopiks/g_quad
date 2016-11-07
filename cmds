@@ -1,1 +1,14 @@
 bedtools sort -i "input" -s > "output"  : sort with strand
+
+acquiring gs in promotors only:
+bedtools window -a tair_g.gff -b Perfect.gff -sw -l 1000 -r 0 -sm > prom_gene.bed : promoters with genes upstream 1000, raw perfect
+awk -F "\t" -v OFS='\t' {'print $10, $11, $12, $13, $14, $15, $16, $17, $18'} prom_gene.bed > pgg.gff : extract g_q coordinates from windowed file
+bedtools intersect -a tair_g.gff -b Perfect.gff 
+bedtools intersect -v -a pgg.gff -b intersect.bed > prom.gff : XOR of window and intersect
+
+bedtools sort -i prom.gff > proms.gff
+bedtools merge -s -i proms.gff > promsm.bed
+
+
+
+$ awk '$n == "m"' in > out: extract records with value m in column n. for multi conditions '($n...)&&('$x...)'
