@@ -1,16 +1,18 @@
 
 from itertools import islice
 
-seq = "GGGACCGGGGGCTTACCGGGCCCGGGCCCGGGCCCGGGAAAGGGAAAAGGGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGGGAAAGGGAAAGGGAAAGGGAAACCAAAAAAAGGAACACCA"
+seq = "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCGGGGGGGGGGGGGGGGGGGGGGGG"
 
 
-"""Give each position in a sequence a score based on a pattern:
+"""
+Give each position in a sequence a score based on a pattern:
 +1 for a single G
 +2 for every G in a double G-tract
 +3 for every G in a triple G-tract
 +4 for every G in a quadruple or more G-tract
 For C's it's analogous, but the values are negative
-A,T gets 0 every time """
+A,T gets 0 every time
+"""
 score =[0]*len(seq) 	#predefined score table
 idx=0 		#iterator index
 while idx < len(seq):
@@ -48,8 +50,10 @@ while idx < len(seq):
 				score[idx + n] = -4
 			idx += g_row+1
 
-"""Sliding window scoring
-Outputs a list of scores, indexes of which correspond to the """
+"""
+Sliding window scoring
+Outputs a list of scores, indexes of which correspond to the particular bases 
+"""
 out=[]
 n=0
 w_s=20	#window size = 25 
@@ -59,8 +63,7 @@ while n <= len(score)-w_s:
 		k+=score[n+m]*1.0 #float
 	ilo=k/w_s #mean for the window
 	out.append(ilo)
-	n+=1
-print out	
+	n+=1	
 
 '''
 #create a list of lists [[Base,Score]]
@@ -75,34 +78,39 @@ print len(seq)
 
 '''
 
-''' Output list of windows above treshold [[start,stop,score]] (potential GQs)'''
+''' 
+Output list of windows above treshold [[start,stop,score]] (potential GQs)
+'''
 tresh = 1.3 #treshold G score
 pre_gs = []
 for idx, itm in enumerate(out):
-	if itm >= tresh:
+	if abs(itm) >= tresh:
 		pre_gs.append([idx,idx+w_s,itm])
-print pre_gs
-
-"""Merge
+"""
 Merges overlapping sites,
 takes as an input a premerged list
 outputs list [[start,stop]]
 """
 def merge(premer):
-	idx=0
+	idx=0		#iterator
 	while idx<= len(premer):
 		try:
-			print premer[idx][0]
-			print premer[idx+1][1]
-			if premer[idx][1]>premer[idx+1][0]:
-				premer[idx:idx+2]=[[premer[idx][0],premer[idx+1][1]]]
-				print premer
-				merge(premer)
+			if premer[idx][1]>premer[idx+1][0] and premer[idx][2]*premer[idx+1][2]>0:		#if end of 1st overlaps start of 2nd site
+																							#and both concern G's or C's
+				premer[idx:idx+2]=[[premer[idx][0],premer[idx+1][1],premer[idx][2]]]	#merge sites (start of 1, end of 2)
+				merge(premer) #run once again to check if newely formed site overlaps next in line
 			idx+=1
-		except IndexError:
+		except IndexError:	#koniec listy
 			break
 	return premer
-merged = merge(pre_gs)
-print "merged"
-print merged
 
+merged = merge(pre_gs) # outputs merged list of putative GQ sites
+
+"""
+End repair
+"""
+'''
+print merged
+for n in merged:
+	try:
+		if seq'''
