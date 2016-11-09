@@ -1,40 +1,7 @@
-"""seq = "GGGCCCGGGCCCGGGCCCGGGCCCGGGCCCGGGAAAGGGAAAGGGAAAGGGAAAGGGAAAGGGAAA"
-
-win_s = 0
-win = []
-score =[0]*25
-win = seq[win_s:win_s+25]
-print win
-for idx, elm in enumerate(win):
-		if elm == 'A' or elm == 'T':
-			score[win_s+idx] = 0
-		elif elm == 'G':
-			g_row=0
-			for n in range(idx+1,24):
-				if win[n]=='G':
-					g_row += 1
-				else: break
-			if g_row < 3:
-				for n in range(g_row+1):
-					print n	
-					print idx		
-					score[win_s+idx+n] = g_row+1
-					print win
-					print score
-				break
-				
-			else:
-				for n in range(g_row+1):
-					score[win_s+idx+n] = 4
-					print score
-				break
-"""				
-
-
 
 from itertools import islice
 
-seq = "GGGACCGGGGGCTTACCGGGCCCGGGCCCGGGCCCGGGAAAGGGAAAGGGAAAGGGAAAGGGAAAGGGAAACCAAAAAAAGGAACACCA"
+seq = "GGGACCGGGGGCTTACCGGGCCCGGGCCCGGGCCCGGGAAAGGGAAAAGGGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGGGAAAGGGAAAGGGAAAGGGAAACCAAAAAAAGGAACACCA"
 
 
 """Give each position in a sequence a score based on a pattern:
@@ -80,11 +47,62 @@ while idx < len(seq):
 			for n in range(g_row + 1):
 				score[idx + n] = -4
 			idx += g_row+1
+
+"""Sliding window scoring
+Outputs a list of scores, indexes of which correspond to the """
+out=[]
+n=0
+w_s=20	#window size = 25 
+while n <= len(score)-w_s: 
+	k=0
+	for m in range(w_s):
+		k+=score[n+m]*1.0 #float
+	ilo=k/w_s #mean for the window
+	out.append(ilo)
+	n+=1
+print out	
+
+'''
 #create a list of lists [[Base,Score]]
-out = []
+out_score = []
 for idx, itm in enumerate(seq):
-	out.append([itm,score[idx]])
+	try:
+		out_score.append([itm,out[idx]])
+	except IndexError:
+		break
+print out_score
+print len(seq)
 
+'''
 
+''' Output list of windows above treshold [[start,stop,score]] (potential GQs)'''
+tresh = 1.3 #treshold G score
+pre_gs = []
+for idx, itm in enumerate(out):
+	if itm >= tresh:
+		pre_gs.append([idx,idx+w_s,itm])
+print pre_gs
 
+"""Merge
+Merges overlapping sites,
+takes as an input a premerged list
+outputs list [[start,stop]]
+"""
+def merge(premer):
+	idx=0
+	while idx<= len(premer):
+		try:
+			print premer[idx][0]
+			print premer[idx+1][1]
+			if premer[idx][1]>premer[idx+1][0]:
+				premer[idx:idx+2]=[[premer[idx][0],premer[idx+1][1]]]
+				print premer
+				merge(premer)
+			idx+=1
+		except IndexError:
+			break
+	return premer
+merged = merge(pre_gs)
+print "merged"
+print merged
 
