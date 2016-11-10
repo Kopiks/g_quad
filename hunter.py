@@ -58,7 +58,7 @@ G4HScore is an arythmetic mean of previously calculated base-scores in a window 
 out=[]
 n=0
 w_s=20	#window size = 25 
-while n <= len(score)-w_s: 
+while n <= len(score)-w_s: # last possible window
 	k=0
 	for m in range(w_s):
 		k+=score[n+m]*1.0 #float
@@ -166,13 +166,23 @@ or by simply raising the treshold
 """
 
 
-print merged
-for n in merged:
-	print n
+for n in merged:	#Refine merged sites
 	n=adder(n,seq)
-	print n
 	n=remover(n,seq)
-	print n
 	
+"""
+Rescoring merged and refined sites
 
+"""
+print "\n"
+print merged
+print "\n"
+for n in merged:
+	i=0
+	for m in range(n[0],n[1]+1):
+		print score[m]
+		i+=score[m]*1.0
+	print i
+	print n[1]-n[0]+1
+	n[2]=i/(n[1]-n[0]+1)
 print merged
