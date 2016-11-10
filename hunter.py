@@ -1,7 +1,7 @@
 
 from itertools import islice
 
-seq = "GGGGGGGGGGGGAAACCCCCCCTGTGCGAGTGAGAGACGCGTGACGGTTTTTTTTTATATATATATAGTAGCGCCCACACACCCCCCAAAAAAGGGGGGGGAAAAAAAAAAAAAGG"
+seq = "GGGGGGGGGGGGAAACCCCCCCTGTGCGAGTGAGAGACGCGTGACGGTTTTTTTTTATATATATATAGTAGCGCCCACACACCCCCCAAAAAAGGGGGGGGAAAAAAAGGAAAAAAGGCC"
 
 
 """
@@ -21,7 +21,7 @@ while idx < len(seq):
 		idx += 1		 #index incrementation
 	elif seq[idx] =='G':
 		g_row = 0 		#number of G's in a row -1 (0-based)
-		for n in range (idx + 1, len(seq)-1):		#length of a G-tract
+		for n in range (idx + 1, len(seq)):		#length of a G-tract
 			if seq[n] == 'G':
 				g_row += 1
 			else: break
@@ -35,7 +35,7 @@ while idx < len(seq):
 			idx += g_row+1
 	elif seq[idx] =='C':		#C scoring, analogous to G scoring
 		g_row = 0
-		for n in range (idx + 1, len(seq)-1):
+		for n in range (idx + 1, len(seq)):
 			if seq[n] == 'C':
 				g_row += 1
 			else: break
