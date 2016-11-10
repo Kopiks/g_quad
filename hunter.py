@@ -1,7 +1,7 @@
 
 from itertools import islice
 
-seq = "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCGGGGGGGGGGGGGGGGGGGGGGGG"
+seq = "GGGGGGGGGGGGAAACCCCCCCTGTGCGAGTGAGAGACGCGTGACGGTTTTTTTTTATATATATATAGTAGCGCCCACACACCCCCCAAAAAAGGGGGGGGAAAAAAAAAAAAAGG"
 
 
 """
@@ -49,10 +49,11 @@ while idx < len(seq):
 			for n in range(g_row + 1):
 				score[idx + n] = -4
 			idx += g_row+1
-
+print score
 """
 Sliding window scoring
-Outputs a list of scores, indexes of which correspond to the particular bases 
+Outputs a list of G4Hscores, indexes of which correspond to the particular bases
+G4HScore is an arythmetic mean of previously calculated base-scores in a window of given size 
 """
 out=[]
 n=0
@@ -64,7 +65,7 @@ while n <= len(score)-w_s:
 	ilo=k/w_s #mean for the window
 	out.append(ilo)
 	n+=1	
-
+print out
 '''
 #create a list of lists [[Base,Score]]
 out_score = []
@@ -85,18 +86,20 @@ tresh = 1.3 #treshold G score
 pre_gs = []
 for idx, itm in enumerate(out):
 	if abs(itm) >= tresh:
-		pre_gs.append([idx,idx+w_s,itm])
+		pre_gs.append([idx,idx+w_s-1,itm]) # -1 found and fixed 10.11.2016
+
+print pre_gs
 """
 Merges overlapping sites,
 takes as an input a premerged list
-outputs list [[start,stop]]
+outputs list [[start,stop, score of first of the merged (+- signs are informative whether dealing with Cs or Gs)]]
 """
 def merge(premer):
 	idx=0		#iterator
 	while idx<= len(premer):
 		try:
 			if premer[idx][1]>premer[idx+1][0] and premer[idx][2]*premer[idx+1][2]>0:		#if end of 1st overlaps start of 2nd site
-																							#and both concern G's or C's
+																							#and both concern G's or C's (+*- score won't trigger)
 				premer[idx:idx+2]=[[premer[idx][0],premer[idx+1][1],premer[idx][2]]]	#merge sites (start of 1, end of 2)
 				merge(premer) #run once again to check if newely formed site overlaps next in line
 			idx+=1
@@ -109,8 +112,67 @@ merged = merge(pre_gs) # outputs merged list of putative GQ sites
 """
 End repair
 """
-'''
+
+"""
+Remove A/T's from ends
+input:
+site - site in a following format: [[start,end,.......]]
+seq - refseq for coords above
+returns corrected site
+"""
+def remover(site, seq):
+	if site[2]>0: #sign of a score (+ for G's - for C's)
+		base="G"
+	else:
+		base="C"
+	if seq[site[0]]!=base: 	#if start base is not C/G   
+		site[0]+=1			#move start forward
+		remover(site,seq)	#check again
+	if seq[site[1]]!=base:	#same with and base
+		site[1]-=1			#but move backward
+		remover(site,seq)
+	return site
+
+"""
+Add C/G's to the ends, if possible
+input and output same as remover
+"""
+def adder(site, seq):
+	if site[2]>0:
+		base="G"
+	else:
+		base="C"
+	if seq[site[0]-1]==base:	#negative indexes = list read backwards!!
+		if site[0]-1>=0:
+			site[0]-=1
+			adder(site,seq)
+		else:
+			pass
+	if seq[site[1]+1]==base:
+		try:					#end of list error handling
+			site[1]+=1
+			adder(site,seq)
+		except IndexError:
+			pass
+	return site
+
+"""
+Problem: extending ends always elevates G4Hscore. So does removing.
+Running adder before the remover might lead to the situation, 
+where a less favourable option might be pushed through,
+resulting in a longer site with lower score.
+This can be solved either by conditional post-refining 
+or by simply raising the treshold
+"""
+
+
 print merged
 for n in merged:
-	try:
-		if seq'''
+	print n
+	n=adder(n,seq)
+	print n
+	n=remover(n,seq)
+	print n
+	
+
+print merged
