@@ -108,7 +108,7 @@ while n <= len(score)-w_s: # last possible window
 ''' 
 Output list of windows above treshold [[start,stop,score]] (potential GQs)
 '''
-tresh = args.tresh #treshold G score
+tresh = args.treshold #treshold G score
 pre_gs = []
 for idx, itm in enumerate(out):
 	if abs(itm) >= tresh:
