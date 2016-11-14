@@ -1,7 +1,7 @@
 
 from itertools import islice
 
-seq = "GGGGGGGGGGGGAAACCCCCCCTGTGCGAGTGAGAGACGCGTGACGGTTTTTTTTTATATATATATAGTAGCGCCCACACACCCCCCAAAAAAGGGGGGGGAAAAAAAGGAAAAAAGGCC"
+seq = "GGGAAAGGGAAAGGGAAAGGGAAAGGGAAACCCAAACCCAAACCCAAACCACCAAACCCAAACCCAAACA"
 
 
 """
@@ -108,7 +108,6 @@ def merge(premer):
 	return premer
 
 merged = merge(pre_gs) # outputs merged list of putative GQ sites
-
 """
 End repair
 """
@@ -142,18 +141,14 @@ def adder(site, seq):
 		base="G"
 	else:
 		base="C"
-	if seq[site[0]-1]==base:	#negative indexes = list read backwards!!
-		if site[0]-1>=0:
-			site[0]-=1
-			adder(site,seq)
-		else:
-			pass
-	if seq[site[1]+1]==base:
-		try:					#end of list error handling
-			site[1]+=1
-			adder(site,seq)
-		except IndexError:
-			pass
+	if seq[site[0]-1]==base:	#if base before start base is G/C	
+		if site[0]-1>=0:		#negative indexes = list read backwards!!
+			site[0]-=1			#move start backwards
+			adder(site,seq)		#run again
+	if site[1]+1<len(seq):		#if not end of list
+		if seq[site[1]+1]==base:#if base after end base is G/C							
+			site[1]+=1			#move end forwards
+			adder(site,seq)		#run again		
 	return site
 
 """
@@ -165,7 +160,7 @@ This can be solved either by conditional post-refining
 or by simply raising the treshold
 """
 
-
+print merged
 for n in merged:	#Refine merged sites
 	n=adder(n,seq)
 	n=remover(n,seq)
@@ -174,15 +169,10 @@ for n in merged:	#Refine merged sites
 Rescoring merged and refined sites
 
 """
-print "\n"
-print merged
-print "\n"
-for n in merged:
-	i=0
-	for m in range(n[0],n[1]+1):
-		print score[m]
-		i+=score[m]*1.0
-	print i
-	print n[1]-n[0]+1
-	n[2]=i/(n[1]-n[0]+1)
-print merged
+
+for n in merged:					#for each site
+	i=0								#sum of base scores calculated in first step
+	for m in range(n[0],n[1]+1):	#for each base in site
+		i+=score[m]*1.0				#add base's score to sum
+	n[2]=i/(n[1]-n[0]+1)			#score=sum of base scores/length of site
+
