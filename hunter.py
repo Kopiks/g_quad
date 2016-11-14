@@ -1,7 +1,47 @@
+"""
+G4Hunter implementation,
+after
+Re-evaluation of G-quadruplex propensity with G4Hunter
+Amina Bedrat, Laurent Lacroix, Jean-Louis Mergny
+Nucleic Acid Res. 2016
+"""
+
+
 
 from itertools import islice
+import argparse
+import string
+import re
+import sys
+import operator
 
-seq = "GGGAAAGGGAAAGGGAAAGGGAAAGGGAAACCCAAACCCAAACCCAAACCACCAAACCCAAACCCAAACA"
+"""
+argument parser,
+based on quadparser found in the Internet
+"""
+parser = argparse.ArgumentParser()
+parser.add_argument('--fasta', '-f', type = str, required = True)		#input file
+parser.add_argument('--treshold', '-tr', type = float, default = 1.3)	#treshold value of G4H score
+parser.add_argument('--window', '-ws', type = int, default = 20)		#sliding window size
+args = parser.parse_args()
+
+
+"""
+Converts fasta input into single string, copied from the quadparser found in the internet
+"""
+
+raw_seq = open(args.fasta)
+line = (raw_seq.readline()).strip()
+seq_id = re.sub('^>', '', line)
+line = (raw_seq.readline()).strip()
+seq =[]
+
+while line.startswith('>') is False:
+       	seq.append(line)
+        line = (raw_seq.readline()).strip()
+        if line == '':
+        	break
+seq = ''.join(seq)
 
 
 """
@@ -49,7 +89,6 @@ while idx < len(seq):
 			for n in range(g_row + 1):
 				score[idx + n] = -4
 			idx += g_row+1
-print score
 """
 Sliding window scoring
 Outputs a list of G4Hscores, indexes of which correspond to the particular bases
@@ -57,7 +96,7 @@ G4HScore is an arythmetic mean of previously calculated base-scores in a window 
 """
 out=[]
 n=0
-w_s=20	#window size = 25 
+w_s=args.window	#window size = 25 
 while n <= len(score)-w_s: # last possible window
 	k=0
 	for m in range(w_s):
@@ -65,30 +104,16 @@ while n <= len(score)-w_s: # last possible window
 	ilo=k/w_s #mean for the window
 	out.append(ilo)
 	n+=1	
-print out
-'''
-#create a list of lists [[Base,Score]]
-out_score = []
-for idx, itm in enumerate(seq):
-	try:
-		out_score.append([itm,out[idx]])
-	except IndexError:
-		break
-print out_score
-print len(seq)
-
-'''
 
 ''' 
 Output list of windows above treshold [[start,stop,score]] (potential GQs)
 '''
-tresh = 1.3 #treshold G score
+tresh = args.tresh #treshold G score
 pre_gs = []
 for idx, itm in enumerate(out):
 	if abs(itm) >= tresh:
 		pre_gs.append([idx,idx+w_s-1,itm]) # -1 found and fixed 10.11.2016
 
-print pre_gs
 """
 Merges overlapping sites,
 takes as an input a premerged list
@@ -160,7 +185,6 @@ This can be solved either by conditional post-refining
 or by simply raising the treshold
 """
 
-print merged
 for n in merged:	#Refine merged sites
 	n=adder(n,seq)
 	n=remover(n,seq)
@@ -176,3 +200,16 @@ for n in merged:					#for each site
 		i+=score[m]*1.0				#add base's score to sum
 	n[2]=i/(n[1]-n[0]+1)			#score=sum of base scores/length of site
 
+
+
+"""
+GFF3 output
+"""
+fo = open("GQ_sites.gff", "w")
+for n in merged:				#for each site
+	if n[2]>0:					#check strand (+ for G's, - for C's)
+		sign="+"
+	else:
+		sign="-"
+	fo.write(seq_id+"\t"+"."+"\t"+"G_quartet"+"\t"+str(n[0]+1)+"\t"+str(n[1]+1)+"\t"+str(abs(n[2]))+"\t"+sign+"\t"+"."+"\t"+"sequence: "+seq[n[0]:n[1]+1]+"\n")
+fo.close()
