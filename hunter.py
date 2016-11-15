@@ -14,7 +14,7 @@ import string
 import re
 import sys
 import operator
-
+sys.setrecursionlimit(10000)
 """
 argument parser,
 based on quadparser found in the Internet
@@ -56,14 +56,16 @@ A,T gets 0 every time
 score =[0]*len(seq) 	#predefined score table
 idx=0 		#iterator index
 while idx < len(seq):
-	if seq[idx] =='A' or seq[idx] == 'T':		#score T's and A's
+	if seq[idx] =='A' or seq[idx] == 'T' or seq[idx] == 'N':		#score T's and A's
 		score[idx] = 0
 		idx += 1		 #index incrementation
 	elif seq[idx] =='G':
 		g_row = 0 		#number of G's in a row -1 (0-based)
-		for n in range (idx + 1, len(seq)):		#length of a G-tract
-			if seq[n] == 'G':
-				g_row += 1
+		k=idx+1			#iterator, starting from base after G
+		while k < len(seq) :		#length of a G-tract
+			if seq[k] == 'G':	
+				g_row += 1		
+				k+=1
 			else: break
 		if g_row < 3:		#scoring for 1,2 and 3 G-tract
 			for n in range (g_row + 1):
@@ -74,21 +76,27 @@ while idx < len(seq):
 				score[idx + n] = 4
 			idx += g_row+1
 	elif seq[idx] =='C':		#C scoring, analogous to G scoring
-		g_row = 0
-		for n in range (idx + 1, len(seq)):
-			if seq[n] == 'C':
-				g_row += 1
+		c_row = 0
+		k=idx+1
+		while k < len(seq):
+			if seq[k] == 'C':
+				c_row += 1
+				k+=1
 			else: break
-		if g_row < 3:
-			for n in range (g_row + 1):
-				score[idx + n] = -(g_row + 1)
-			idx += g_row+1
+		print c_row
+		if c_row < 3:
+			for n in range (c_row + 1):
+				score[idx + n] = -(c_row + 1)
+			idx += c_row+1
 				
 			
 		else:
-			for n in range(g_row + 1):
+			for n in range(c_row + 1):
 				score[idx + n] = -4
-			idx += g_row+1
+			idx += c_row+1
+
+
+print score
 """
 Sliding window scoring
 Outputs a list of G4Hscores, indexes of which correspond to the particular bases
@@ -104,6 +112,7 @@ while n <= len(score)-w_s: # last possible window
 	ilo=k/w_s #mean for the window
 	out.append(ilo)
 	n+=1	
+print out
 
 ''' 
 Output list of windows above treshold [[start,stop,score]] (potential GQs)
@@ -136,7 +145,7 @@ merged = merge(pre_gs) # outputs merged list of putative GQ sites
 """
 End repair
 """
-
+print merged
 """
 Remove A/T's from ends
 input:
@@ -188,7 +197,7 @@ or by simply raising the treshold
 for n in merged:	#Refine merged sites
 	n=adder(n,seq)
 	n=remover(n,seq)
-	
+print merged	
 """
 Rescoring merged and refined sites
 
