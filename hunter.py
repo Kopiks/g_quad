@@ -56,10 +56,7 @@ A,T gets 0 every time
 score =[0]*len(seq) 	#predefined score table
 idx=0 		#iterator index
 while idx < len(seq):
-	if seq[idx] =='A' or seq[idx] == 'T' or seq[idx] == 'N':		#score T's and A's
-		score[idx] = 0
-		idx += 1		 #index incrementation
-	elif seq[idx] =='G':
+	if seq[idx] =='G':
 		g_row = 0 		#number of G's in a row -1 (0-based)
 		k=idx+1			#iterator, starting from base after G
 		while k < len(seq) :		#length of a G-tract
@@ -94,6 +91,9 @@ while idx < len(seq):
 			for n in range(c_row + 1):
 				score[idx + n] = -4
 			idx += c_row+1
+	else:					#score for T's and A's (and N's or similar)
+		score[idx] = 0
+		idx += 1
 
 
 print score
@@ -135,8 +135,12 @@ def merge(premer):
 			if premer[idx][1]>premer[idx+1][0] and premer[idx][2]*premer[idx+1][2]>0:		#if end of 1st overlaps start of 2nd site
 																							#and both concern G's or C's (+*- score won't trigger)
 				premer[idx:idx+2]=[[premer[idx][0],premer[idx+1][1],premer[idx][2]]]	#merge sites (start of 1, end of 2)
-				merge(premer) #run once again to check if newely formed site overlaps next in line
-			idx+=1
+				#print "REC"
+				#merge(premer) #run once again to check if newely formed site overlaps next in line
+				#print "NEW"
+			
+			else :
+				idx+=1
 		except IndexError:	#koniec listy
 			break
 	return premer
