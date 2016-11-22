@@ -12,3 +12,8 @@ bedtools merge -s -i proms.gff > promsm.bed
 
 
 $ awk '$n == "m"' in > out: extract records with value m in column n. for multi conditions '($n...)&&('$x...)'
+
+
+samtools mpileup -g -f Chr2.fasta out.bam > var.bcf
+bcftools view -v var.bcf > var.raw.vcf				
+
