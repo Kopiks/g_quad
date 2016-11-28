@@ -9,9 +9,24 @@ bedtools intersect -v -a pgg.gff -b intersect.bed > prom.gff : XOR of window and
 bedtools sort -i prom.gff > proms.gff
 bedtools merge -s -i proms.gff > promsm.bed
 
+in genes,3utr,5utr,cds,exons,lncrna,mirna,mrna,rrna,snorna,snrna,trans,trna:
+bedtools intersect -a tair -b gq -s/S 
 
+introns:
+
+intersect -v -a genes -b exons -b 5utr -b 3 utr
+
+intr/ex:
+intersect -a exons -b introns
+
+tss:
+prom/5'utr
+
+
+in
 
 $ awk '$n == "m"' in > out: extract records with value m in column n. for multi conditions '($n...)&&('$x...)'
+awk -F"\t" -v OFS='\t' '$3=="mRNA"' tair10.gff > tair_mrna.gff
 
 
 samtools mpileup -g -f Chr2.fasta out.bam > var.bcf

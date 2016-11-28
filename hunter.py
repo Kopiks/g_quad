@@ -80,7 +80,6 @@ while idx < len(seq):
 				c_row += 1
 				k+=1
 			else: break
-		print c_row
 		if c_row < 3:
 			for n in range (c_row + 1):
 				score[idx + n] = -(c_row + 1)
@@ -96,7 +95,6 @@ while idx < len(seq):
 		idx += 1
 
 
-print score
 """
 Sliding window scoring
 Outputs a list of G4Hscores, indexes of which correspond to the particular bases
@@ -112,7 +110,6 @@ while n <= len(score)-w_s: # last possible window
 	ilo=k/w_s #mean for the window
 	out.append(ilo)
 	n+=1	
-print out
 
 ''' 
 Output list of windows above treshold [[start,stop,score]] (potential GQs)
@@ -149,7 +146,6 @@ merged = merge(pre_gs) # outputs merged list of putative GQ sites
 """
 End repair
 """
-print merged
 """
 Remove A/T's from ends
 input:
@@ -200,8 +196,7 @@ or by simply raising the treshold
 
 for n in merged:	#Refine merged sites
 	n=adder(n,seq)
-	n=remover(n,seq)
-print merged	
+	n=remover(n,seq)	
 """
 Rescoring merged and refined sites
 
@@ -218,11 +213,11 @@ for n in merged:					#for each site
 """
 GFF3 output
 """
-fo = open("GQ_sites.gff", "w")
+#fo = open("GQ_sites.gff", "w")
 for n in merged:				#for each site
 	if n[2]>0:					#check strand (+ for G's, - for C's)
 		sign="+"
 	else:
 		sign="-"
-	fo.write(seq_id+"\t"+"."+"\t"+"G_quartet"+"\t"+str(n[0]+1)+"\t"+str(n[1]+1)+"\t"+str(abs(n[2]))+"\t"+sign+"\t"+"."+"\t"+"sequence: "+seq[n[0]:n[1]+1]+"\n")
-fo.close()
+	sys.stdout.write(seq_id+"\t"+"."+"\t"+"G_quartet"+"\t"+str(n[0]+1)+"\t"+str(n[1]+1)+"\t"+str(abs(n[2]))+"\t"+sign+"\t"+"."+"\t"+"sequence: "+seq[n[0]:n[1]+1]+"\n")
+#fo.close()
