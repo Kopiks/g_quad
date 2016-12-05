@@ -219,5 +219,5 @@ for n in merged:				#for each site
 		sign="+"
 	else:
 		sign="-"
-	sys.stdout.write(seq_id+"\t"+"."+"\t"+"G_quartet"+"\t"+str(n[0]+1)+"\t"+str(n[1]+1)+"\t"+str(abs(n[2]))+"\t"+sign+"\t"+"."+"\t"+"sequence: "+seq[n[0]:n[1]+1]+"\n")
+	sys.stdout.write(seq_id+"\t"+"."+"\t"+"G_quartet"+"\t"+str(n[0]+1)+"\t"+str(n[1]+1)+"\t"+str(abs(n[2]))+"\t"+sign+"\t"+"."+"\t"+"sequence="+seq[n[0]:n[1]+1]+"\n")
 #fo.close()

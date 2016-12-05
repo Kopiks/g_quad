@@ -30,5 +30,14 @@ awk -F"\t" -v OFS='\t' '$3=="mRNA"' tair10.gff > tair_mrna.gff
 
 
 samtools mpileup -g -f Chr2.fasta out.bam > var.bcf
-bcftools view -v var.bcf > var.raw.vcf				
+bcftools view -v var.bcf > var.raw.vcf	
 
+
+MULTIFASTA SPLIT:
+awk '/^>/{s=++d".fasta"} {print > s}' <inputFile> 			
+
+
+bowtie2 -p 4 -x ./A.thal/chr_all -1 ./ath1001/SRR1945868_1.fastq -2 ./ath1001/SRR1945868_2.fastq | samtools view -Sb - | samtools sort - SRR1945868_bowtie && samtools index SRR1945868_bowtie.bam && bowtie2 -p 4 --very-sensitive -v -x ./A.thal/chr_all -1 ./ath1001/SRR1945868_1.fastq -2 ./ath1001/SRR1945868_2.fastq | samtools view -Sb - | samtools sort - SRR1945868_bowtie_vs && samtools index SRR1945868_bowtie_vs.bam && bwa mem -t 4 ./A.thal/chr_all.fas ./ath1001/SRR1945868_1.fastq ./ath1001/SRR1945868_2.fastq | samtools view -Sb - | samtools sort - SRR1945868_mem && samtools index SRR1945868_mem.bam
+
+
+bwa mem -t 4 -k 14 ./A.thal/chr_all.fas ./ath1001/SRR1945868_1.fastq ./ath1001/SRR1945868_2.fastq | samtools view -Sb - | samtools sort - SRR1945868_mem_k14 && samtools index SRR1945868_mem_k14.bam && bwa mem -t 4 -k 17 -W 50  ./A.thal/chr_all.fas ./ath1001/SRR1945868_1.fastq ./ath1001/SRR1945868_2.fastq | samtools view -Sb - | samtools sort - SRR1945868_mem_k17_w50 && samtools index SRR1945868_mem_k17_w50.bam &&  bwa mem -t 4 -intractg ./A.thal/chr_all.fas ./ath1001/SRR1945868_1.fastq ./ath1001/SRR1945868_2.fastq | samtools view -Sb - | samtools sort - SRR1945868_mem_intractg && samtools index SRR1945868_mem_intractg.bam
