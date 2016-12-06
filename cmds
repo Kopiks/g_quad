@@ -1,27 +1,5 @@
 bedtools sort -i "input" -s > "output"  : sort with strand
 
-acquiring gs in promotors only:
-bedtools window -a tair_g.gff -b Perfect.gff -sw -l 1000 -r 0 -sm > prom_gene.bed : promoters with genes upstream 1000, raw perfect
-awk -F "\t" -v OFS='\t' {'print $10, $11, $12, $13, $14, $15, $16, $17, $18'} prom_gene.bed > pgg.gff : extract g_q coordinates from windowed file
-bedtools intersect -a tair_g.gff -b Perfect.gff 
-bedtools intersect -v -a pgg.gff -b intersect.bed > prom.gff : XOR of window and intersect
-
-bedtools sort -i prom.gff > proms.gff
-bedtools merge -s -i proms.gff > promsm.bed
-
-in genes,3utr,5utr,cds,exons,lncrna,mirna,mrna,rrna,snorna,snrna,trans,trna:
-bedtools intersect -a tair -b gq -s/S 
-
-introns:
-
-intersect -v -a genes -b exons -b 5utr -b 3 utr
-
-intr/ex:
-intersect -a exons -b introns
-
-tss:
-prom/5'utr
-
 
 in
 
@@ -41,3 +19,19 @@ bowtie2 -p 4 -x ./A.thal/chr_all -1 ./ath1001/SRR1945868_1.fastq -2 ./ath1001/SR
 
 
 bwa mem -t 4 -k 14 ./A.thal/chr_all.fas ./ath1001/SRR1945868_1.fastq ./ath1001/SRR1945868_2.fastq | samtools view -Sb - | samtools sort - SRR1945868_mem_k14 && samtools index SRR1945868_mem_k14.bam && bwa mem -t 4 -k 17 -W 50  ./A.thal/chr_all.fas ./ath1001/SRR1945868_1.fastq ./ath1001/SRR1945868_2.fastq | samtools view -Sb - | samtools sort - SRR1945868_mem_k17_w50 && samtools index SRR1945868_mem_k17_w50.bam &&  bwa mem -t 4 -intractg ./A.thal/chr_all.fas ./ath1001/SRR1945868_1.fastq ./ath1001/SRR1945868_2.fastq | samtools view -Sb - | samtools sort - SRR1945868_mem_intractg && samtools index SRR1945868_mem_intractg.bam
+
+samtools view -f 2 -q 20 SRR1945758_mem.bam > filtered.bam
+piotr@maple:~/Desktop/g_quad-master/g_quad$ samtools view -b -f 2 -q 20 SRR1945758_mem.bam > filtered.bam
+piotr@maple:~/Desktop/g_quad-master/g_quad$ samtools flagstat filtered.bam
+41124697 + 0 in total (QC-passed reads + QC-failed reads)
+0 + 0 duplicates
+41124697 + 0 mapped (100.00%:-nan%)
+41124697 + 0 paired in sequencing
+20592548 + 0 read1
+20532149 + 0 read2
+41124697 + 0 properly paired (100.00%:-nan%)
+41124697 + 0 with itself and mate mapped
+0 + 0 singletons (0.00%:-nan%)
+2932 + 0 with mate mapped to a different chr
+2932 + 0 with mate mapped to a different chr (mapQ>=5)
+
