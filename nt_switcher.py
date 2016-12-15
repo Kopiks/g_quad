@@ -21,11 +21,12 @@ for line in gq_in:
 	print line
 	line_s=line.split("\t")
 	seq = list(line_s[8].split(";")[0].split("=")[1])
+	seq_mut=seq[:]
 	print "".join(seq)
 	temp=[]
 	out_seq=[]
 	for record in data:
-		if line_s[3] <= record[1] <= line_s[4] and record[0]==line_s[0]:
+		if int(line_s[3]) <= int(record[1]) <= int(line_s[4]) and record[0]==line_s[0]:
 			temp.append(record)
 	if temp: print temp
 	
@@ -34,7 +35,15 @@ for line in gq_in:
 		for m in range(int(n[7]["AN"])):
 			if n[7]["AN"]==n[7]["AC"]:
 				print int(n[1])-int(line_s[3])
-				seq[int(n[1])-int(line_s[3])]=n[4]
+				seq_mut[int(n[1])-int(line_s[3])]=n[4]
+				print seq_mut
 				print seq
-
-
+				break
+			else:
+				ac_sum=0
+				print n[7]["AC"].split(",")
+				#ac_sum = ac_sum + k for k in n[7]["AC"].split(",")
+				print ac_sum
+				print sum(n[7]["AC"].split(","))
+				if sum(n[7]["AC"].split(","))-int(n[7]["AN"])==0:
+					pass
