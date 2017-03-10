@@ -35,3 +35,38 @@ piotr@maple:~/Desktop/g_quad-master/g_quad$ samtools flagstat filtered.bam
 2932 + 0 with mate mapped to a different chr
 2932 + 0 with mate mapped to a different chr (mapQ>=5)
 
+
+bedtools flank -i ../araport/araport_gene.gff -g ../A.thal/athal.genome -s -r 0 -l 1000 > ../araport/araport_promoter.gff ->get the promoters
+
+sed 's/ChrM/Chrmt/g' araport_promoter_sorted.gff | sed -e 's/ChrC/Chrch/g' > sorted_proms.gff   (g-global; -e = stdin)
+
+awk -F"\t" -v OFS='\t' '{print $1, $4-1, $5-1}' sort_prom.gff > sort_prom.bed
+
+picard AddOrReplaceGroups INPUT != OUTPUT !!!!!!!!!!!!!
+java -jar $picard AddOrReplaceReadGroups I=SRR1946553_mem.bam O=SRR19465553 RGID=foo RGLB=foo RGPL=foo RGPU=foo RGSM=SRR1946553
+
+uwazaj na ChrC Chrch itd...
+
+
+java -jar $GATK -T DepthOfCoverage -L ./araport/sort_prom.bed -I SRR1946329.bam -I SRR19465553.bam -o testoutput2 -R ./A.thal/chr_all.fa
+z testoutput2_sample_interval_summary:
+awk -F"\t" -v OFS="\t" '{printf("%s%s%s%s",$1,OFS,$3/2,OFS); for(i=5; i<= NF;i+=6) printf("%s%s",$i,(i+6>NF?"\n":OFS))}' -> interwal, avg interwalu(2zmienic na ilosc sampli), avg dla poszczegolnych sampli
+
+java -Xmx8g -jar $picard MarkDuplicates INPUT=SRR1946329.bwa.bam OUTPUT=marked.bam METRICS_FILE=metrics.txt OPTICAL_DUPLICATE_PIXEL_DISTANCE=2500 CREATE_INDEX=true TMP_DIR=/tmp
+
+
+java -jar $GATK -T HaplotypeCaller -R ../A.thal/chr_all.fa -I marked.bam -mmq 20 -rf DuplicateRead -rf MateSameStrand -rf BadCigar -rf BadMate -o marked_raw.vcf
+
+
+bash:
+for i in *; do samtools view -H $i; done
+
+
+R:
+x<-read.csv(file="deptharray",head=TRUE,sep="\t",row.names=1)
+apply(x,2,ks.test,y="pnorm") kolo smirnov
+
+
+python ../bams.py && cd ReadGroups && python ../../DepthOfCoverage.py /home/piotr/Desktop/g_quad-master/g_quad/A.thal/refseq.fa
+
+

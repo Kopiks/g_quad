@@ -1,3 +1,5 @@
+
+
 import os
 import subprocess
 
@@ -9,18 +11,57 @@ def getFiles():
 
 
 
-def addGroups():
+def addGroups(path,files):
 	"""
-	Adds read groups using picard
+	Adds read groups and mark duplicates using picard
 	"""
-	os.makedirs("ReadGroups")
+	if not os.path.exists("ReadGroups"):
+		os.makedirs("ReadGroups")
 	for file in files:
-			filename = ".".join(file.split(".")[:-2]) #SRR number
-			output = "%s/ReadGroups/%s"%(path,filename[0]+".bam")
-			subprocess.call("java -jar $picard AddOrReplaceReadGroups I=%s O=%s RGID=- RGLB=- RGPL=- RGPU=- RGSM=%s" %(file, output, filename), shell=True)
-"""
-def markDuplicates():
-	for file in files:
+			filename = file.split(".")[0] #SRR number
+			print filename
+			output = "%s/ReadGroups/%s"%(path,filename)
 
-"""
-print getFiles()
+			dupli = (
+						"java -jar $picard "
+						"MarkDuplicates "
+						"INPUT=%s "
+						"OUTPUT=%s "
+						"METRICS_FILE=%s "
+						"OPTICAL_DUPLICATE_PIXEL_DISTANCE=2500 "
+						"CREATE_INDEX=true "
+						#"QUIET=true"
+						%(output+"_pre.bam", output+".bam", output+"_metrics.txt")
+					)
+
+			groups =(	
+						"samtools sort "
+						"%s |"
+						"java -jar $picard "
+						"AddOrReplaceReadGroups "
+						"I=/dev/stdin "
+						"O=%s "
+						"RGID=UNKNOWN "
+						"RGLB=UNKNOWN "
+						"RGPL=UNKNOWN "
+						"RGPU=UNKNOWN "
+						"RGSM=%s "
+						#"QUIET=true "
+						"COMPRESSION_LEVEL=0 "
+						"TMP_DIR=/tmp"
+						%(file, output+"_pre.bam", filename)
+					)
+
+
+			subprocess.call(groups, shell=True) #os.system(groups)
+			subprocess.call(dupli, shell=True) #os.system(dupli)
+			try:
+				os.remove(output+"_pre.bam")
+			except OSError:
+				pass
+			
+def main():
+	pf = getFiles()
+	addGroups(pf['path'], pf['files'])
+	return 0
+main();
