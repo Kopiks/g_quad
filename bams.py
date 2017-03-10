@@ -54,6 +54,8 @@ def addGroups(path,files):
 
 
 			subprocess.call(groups, shell=True) #os.system(groups)
+
+			
 			subprocess.call(dupli, shell=True) #os.system(dupli)
 			try:
 				os.remove(output+"_pre.bam")

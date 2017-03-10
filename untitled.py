@@ -257,7 +257,7 @@ def main():
 	intervals = path+"/filtered.bed"
 
 	for idx in ids:
-		reCalib(idx, intervals)
+		hardFilter(idx)
 
 
 
