@@ -252,6 +252,11 @@ def reCalib(idx, intervals):
 refseq = sys.argv[1]
 def main():
 	input = filterInput()
+
+	newBed(input)
+	reCount(input)
+	varCall(input)
+
 	ids = [x for x in input[0][1:-1]]
 	path = os.getcwd()
 	intervals = path+"/filtered.bed"
