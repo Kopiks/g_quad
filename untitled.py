@@ -94,6 +94,7 @@ def reCount(inp):
 	cmd = 	(	
 				"java -jar $GATK " 
 				"-T DepthOfCoverage "
+				"-ct 10 "
 				"-omitBaseOutput "
 				"-L %s "  
 				"-o recount "
@@ -241,30 +242,23 @@ def reCalib(idx, intervals):
 
 
 
-
-
-
-
-
-
-
-
 refseq = sys.argv[1]
 def main():
 	input = filterInput()
-
+	
 	newBed(input)
 	reCount(input)
 	varCall(input)
-
+	
 	ids = [x for x in input[0][1:-1]]
 	path = os.getcwd()
 	intervals = path+"/filtered.bed"
 
 	for idx in ids:
 		hardFilter(idx)
+		#reCalib(idx, intervals)
 
 
-
-main()
+if __name__ == '__main__':
+	main()
 
