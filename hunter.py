@@ -96,10 +96,10 @@ def meanScore(nt_score):
 	"""
 	calculates mean score for a range of nt_scores
 	"""
-	sum=0
+	suma=0
 	for n in range(len(nt_score)):
-		sum+=nt_score[n]*1.0
-	return sum/len(nt_score)
+		suma+=nt_score[n]*1.0
+	return suma/len(nt_score)
 def windowScore(nt_score, window_size): 
 	"""
 	Sliding window scoring
@@ -112,17 +112,18 @@ def windowScore(nt_score, window_size):
 	w_s= window_size 	#args.window	#window size = 25 
 	score = nt_score
 	while n <= len(score)-w_s: # last possible window
-		out.append(meanScore(score[n:w_s]))
+		out.append(meanScore(score[n:n+w_s]))
 		n += 1
 	return out
-def aboveTresh(threshold, window_score): 
+def aboveTresh(threshold, window_score,window_size): 
 	'''
 	inputs: threshold, window score array
 	Output list of windows above threshold [[start,stop,score]] (potential GQs)
 	'''
 	tresh = threshold #args.treshold #treshold G score
 	pre_gs = []
-	for idx, itm in enumerate(out):
+	w_s=window_size
+	for idx, itm in enumerate(window_score):
 		if abs(itm) >= tresh:
 			pre_gs.append([idx,idx+w_s-1,itm]) # -1 found and fixed 10.11.2016
 	return pre_gs
@@ -202,7 +203,7 @@ def refineEdge(merged, seq):
 		n=add(n,seq)
 		n=remove(n,seq)
 	for n in merged:
-		n[2]=rescore(seq[n[0]:n[1]])
+		n[2]=rescore(seq[n[0]:n[1]+1])
 	return merged
 def rescore(seq):
 	"""
@@ -230,10 +231,10 @@ def mainHunter(input_, threshold_, window_size):
 	seq_id=seq_sid['seq_id']									#seq_id = sequence id (ChrN)
 	score_ = ntScore(seq_)									#score each nucleotide
 	window_score = windowScore(score_, window_size)			#sliding window G4H score
-	window_score = aboveTresh(threshold_, window_score)		#extract windows above threshold
+	window_score = aboveTresh(threshold_, window_score, window_size)		#extract windows above threshold
 	window_score = merge(window_score)						#merge overlapping windows
 	window_score = refineEdge(window_score, seq_)			#refine edges, rescore
 	gffOutput(window_score, seq_, seq_id)					#stream gff3 to stdout
 	
 if __name__ == '__main__':
-	mainHunter(sys.argv[1], 1.5, 20)
+	mainHunter(sys.argv[1], 1.3, 20)

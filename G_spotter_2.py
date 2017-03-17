@@ -79,17 +79,17 @@ for n in strand:
 
 tab_sorted=sort_table(tab,(0,3,4))
 
-print tab_sorted
+#print tab_sorted
 
 
-fo = open("The_list.gff","w")
+#fo = open("The_list.gff","w")
 for line in tab_sorted:
 	temp=line[1]
-    	fo.write(line[0]+'\t'+'.'+'\t'+'G_quartet'+'\t'+str(line[3])+'\t'+str(line[4])+'\t'+str(line[2])+'\t'+line[5]+'\t'+'.'+'\t'+'sequence: %s'%(temp)+'\n')
-fo.close()
+    	sys.stdout.write(line[0]+'\t'+'.'+'\t'+'G_quartet'+'\t'+str(line[3])+'\t'+str(line[4])+'\t'+str(line[2])+'\t'+line[5]+'\t'+'.'+'\t'+'sequence: %s'%(temp)+'\n')
+#fo.close()
 
-scores=[0,0,0,0,0]
-
+#scores=[0,0,0,0,0]
+"""
 for n,m in enumerate(scores):
 	tout=0
 	for line in tab_sorted:		
@@ -102,4 +102,4 @@ f = open("numbers.txt","w")
 f.write('ALL: %d\n0: %d\n1: %d\n2: %d\n3: %d\n4: %d'%(tout,int(scores[0]),int(scores[1]),int(scores[2]),int(scores[3]),int(scores[4])))
 f.close()
 	
-
+"""
