@@ -1,3 +1,8 @@
+"""
+Sliding window PQS extraction
+"""
+
+
 import argparse
 import string
 import re

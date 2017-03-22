@@ -25,11 +25,11 @@ def getDepth():
               	+(" ".join(files))
 		)
 	cmd = 	(	
-				"java -jar $GATK " 
+				"java -Xmx15G -jar $GATK " 
 				"-T DepthOfCoverage "
 				"-ct 10 "
 				"-omitBaseOutput "
-				"-L /home/piotr/Desktop/g_quad-master/g_quad/araport/inters.bed "
+				"-L /home/piotr/Desktop/g_quad-master/g_quad/araport/promoters.bed "
 				"-o output "
 				"-R %s "%refseq
 				+(" ".join(files))
@@ -41,9 +41,9 @@ def getDepth():
 				''' output.sample_interval_summary > interval_summary ''' 
 			) 
 	
-	subprocess.call(dt, shell=True)
-	#subprocess.call(cmd, shell=True)
-	#subprocess.call(awk, shell=True)
+	#subprocess.call(dt, shell=True)
+	subprocess.call(cmd, shell=True)
+	subprocess.call(awk, shell=True)
 
 def mainDepth():
 	getFiles()
